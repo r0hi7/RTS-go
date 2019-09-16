@@ -1,0 +1,40 @@
+{
+    "interval": 30,
+    "sources": [
+        "twitter",
+        "github",
+        "reddit",
+        "codepad"
+    ],
+    "twitter": {
+        "consumerKey": "",
+        "consumerSecret": "",
+        "accessToken": "",
+        "accessSecret": "",
+        "searchTerms": [
+            "companyabcd data breach",
+            "companyabcd hack"
+        ]
+    },
+    "reddit": {
+        "url": "https://api.pushshift.io/reddit/search/submission/",
+        "interval": "30s",
+        "searchTerms": [
+            "companyabcd data breach",
+            "companyabcd hack"
+        ]
+    },
+    "github": {
+        "searchTerms": [
+            "companyabcd data breach",
+            "companyabcd hack"
+        ]
+    },
+    "codepad": {
+        "url": "http://codepad.org/recent",
+        "searchTerms": [
+            "companyabcd data breach",
+            "companyabcd hack"
+        ]
+    }
+}
