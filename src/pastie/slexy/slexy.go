@@ -1,4 +1,4 @@
-package codepad
+package slexy
 
 import (
 	"fmt"
@@ -6,37 +6,65 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/nishitm/RTS-go/config"
 )
 
 var urlMap = make(map[string]bool)
 
-type CodepadImplement struct{}
+//SlexyImplement struct is used to implement the interface GetSearchedTerm
+type SlexyImplement struct{}
 
-// GetSearchedTerm method implementation for Codepad
-func (c CodepadImplement) GetSearchedTerm(configuration config.Config) {
-	doc, err := goquery.NewDocument(configuration.Codepad.URL)
+func unique(stringSlice []string) []string {
+	keys := make(map[string]bool)
+	list := []string{}
+	for _, entry := range stringSlice {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return list
+}
+
+// GetSearchedTerm method implementation for Slexy
+func (c SlexyImplement) GetSearchedTerm(configuration config.Config) {
+
+	resp, err := http.Get(configuration.Slexy.URL)
 	if err != nil {
 		log.Print(err)
 		return
 	}
+	defer resp.Body.Close()
+	html, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Print(err)
+		return
+	}
+	r := regexp.MustCompile(configuration.Slexy.Regex)
+	matches := r.FindAllString(string(html), -1)
+	matches = unique(matches)
+
+	for i, str := range matches {
+		matches[i] = configuration.Slexy.URLBase + str[9:len(str)-1]
+	}
+
 	newMap := make(map[string]bool)
-	doc.Find(".section .label a").Each(func(i int, s *goquery.Selection) {
-		Link, _ := s.Attr("href")
-		if len(urlMap) == 20 { //Since Codepad is giving 20 entries at a time
-			_, ok := urlMap[Link]
+	for _, link := range matches {
+		if len(urlMap) == 20 { //Since Slexy is giving 20 entries at a time
+			_, ok := urlMap[link]
 			if ok {
-				urlMap[Link] = true
+				urlMap[link] = true
 			} else {
-				newMap[Link] = false
+				newMap[link] = false
 			}
 		} else {
-			urlMap[Link] = false
+			urlMap[link] = false
 		}
-	})
+	}
+
 	if len(newMap) > 0 {
 		for k := range urlMap {
 			if urlMap[k] == false {
@@ -70,6 +98,7 @@ func (c CodepadImplement) GetSearchedTerm(configuration config.Config) {
 
 			}
 		}
+
 	}
 
 	for k := range urlMap {

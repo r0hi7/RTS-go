@@ -7,6 +7,8 @@ import (
 	"github.com/nishitm/RTS-go/config"
 	"github.com/nishitm/RTS-go/src/github"
 	"github.com/nishitm/RTS-go/src/pastie/codepad"
+	"github.com/nishitm/RTS-go/src/pastie/kpaste"
+	"github.com/nishitm/RTS-go/src/pastie/slexy"
 	"github.com/nishitm/RTS-go/src/reddit"
 	"github.com/nishitm/RTS-go/src/twitter"
 
@@ -43,6 +45,12 @@ func main() {
 			case "codepad":
 				codepadObj := &codepad.CodepadImplement{}
 				go codepadObj.GetSearchedTerm(configurations)
+			case "slexy":
+				slexyObj := &slexy.SlexyImplement{}
+				go slexyObj.GetSearchedTerm(configurations)
+			case "kpaste":
+				kpasteObj := &kpaste.KpasteImplement{}
+				go kpasteObj.GetSearchedTerm(configurations)
 			}
 		}
 	}

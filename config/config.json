@@ -4,7 +4,9 @@
         "twitter",
         "github",
         "reddit",
-        "codepad"
+        "codepad",
+        "slexy",
+        "kpaste"
     ],
     "twitter": {
         "consumerKey": "",
@@ -32,6 +34,24 @@
     },
     "codepad": {
         "url": "http://codepad.org/recent",
+        "searchTerms": [
+            "companyabcd data breach",
+            "companyabcd hack"
+        ]
+    },
+    "slexy": {
+        "url": "https://slexy.org/recent",
+        "urlbase": "https://slexy.org",
+        "regex": "<a href=\"/view/([a-zA-Z0-9]+)\"",
+        "searchTerms": [
+            "companyabcd data breach",
+            "companyabcd hack"
+        ]
+    },
+    "kpaste": {
+        "url": "https://kpaste.net",
+        "urlbase": "https://kpaste.net",
+        "regex": "\" href=\"/([a-z0-9]*)\">",
         "searchTerms": [
             "companyabcd data breach",
             "companyabcd hack"

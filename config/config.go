@@ -8,6 +8,8 @@ type Config struct {
 	Reddit   RedditStruct  `json:reddit`
 	Github   GithubStruct  `json:github`
 	Codepad  CodepadStruct `json:codepad`
+	Slexy    SlexyStruct   `json:slexy`
+	Kpaste   KpasteStruct  `json:kpaste`
 	Interval time.Duration `json:interval` //This interval is consecutive scan timings in seconds
 	Sources  []string      `json:sources`
 }
@@ -36,5 +38,21 @@ type GithubStruct struct {
 // CodepadStruct is the struct for codepad.com pastie website configurations
 type CodepadStruct struct {
 	URL         string   `json:url`
+	SearchTerms []string `json:searchTerms`
+}
+
+// SlexyStruct is the struct for the https://slexy.org/ pastie website configurations
+type SlexyStruct struct {
+	URL         string   `json:url`
+	URLBase     string   `json:urlbase`
+	Regex       string   `json:regex`
+	SearchTerms []string `json:searchTerms`
+}
+
+// KpasteStruct is the struct for the https://kpaste.net/ pastie website configurations
+type KpasteStruct struct {
+	URL         string   `json:url`
+	URLBase     string   `json:urlbase`
+	Regex       string   `json:regex`
 	SearchTerms []string `json:searchTerms`
 }
