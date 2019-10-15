@@ -1,4 +1,4 @@
-package codepad
+package kpaste
 
 import (
 	"fmt"
@@ -6,37 +6,53 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/nishitm/RTS-go/config"
 )
 
 var urlMap = make(map[string]bool)
 
-type CodepadImplement struct{}
+//KpasteImplement struct is used to implement the interface GetSearchedTerm
+type KpasteImplement struct{}
 
-// GetSearchedTerm method implementation for Codepad
-func (c CodepadImplement) GetSearchedTerm(configuration config.Config) {
-	doc, err := goquery.NewDocument(configuration.Codepad.URL)
+// GetSearchedTerm method implementation for Kpaste
+func (c KpasteImplement) GetSearchedTerm(configuration config.Config) {
+
+	resp, err := http.Get(configuration.Kpaste.URL)
 	if err != nil {
 		log.Print(err)
 		return
 	}
+	defer resp.Body.Close()
+	html, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Print(err)
+		return
+	}
+	r := regexp.MustCompile(configuration.Kpaste.Regex)
+	matches := r.FindAllString(string(html), -1)
+	matches = matches[:len(matches)-1]
+
+	for i, str := range matches {
+		matches[i] = configuration.Kpaste.URLBase + str[8:len(str)-2]
+	}
+
 	newMap := make(map[string]bool)
-	doc.Find(".section .label a").Each(func(i int, s *goquery.Selection) {
-		Link, _ := s.Attr("href")
-		if len(urlMap) == 20 { //Since Codepad is giving 20 entries at a time
-			_, ok := urlMap[Link]
+	for _, link := range matches {
+		if len(urlMap) == 10 { //Since Kpaste is giving 10 entries at a time
+			_, ok := urlMap[link]
 			if ok {
-				urlMap[Link] = true
+				urlMap[link] = true
 			} else {
-				newMap[Link] = false
+				newMap[link] = false
 			}
 		} else {
-			urlMap[Link] = false
+			urlMap[link] = false
 		}
-	})
+	}
+
 	if len(newMap) > 0 {
 		for k := range urlMap {
 			if urlMap[k] == false {
